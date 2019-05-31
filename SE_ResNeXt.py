@@ -3,6 +3,7 @@ from tflearn.layers.conv import global_avg_pool
 from tensorflow.contrib.layers import batch_norm, flatten
 from tensorflow.contrib.framework import arg_scope
 from dt import *
+import keras.layers
 import numpy as np
 
 weight_decay = 0.0005
@@ -24,8 +25,11 @@ reduction_ratio = 4
 class_num=10
 batch_size = 128
 
-iteration = 391
+# iteration = 391
 # 128 * 391 ~ 50,000
+
+iteration=36
+# 128*36~4608
 
 test_iteration = 10
 
@@ -71,7 +75,7 @@ def Evaluate(sess):
     test_acc = 0.0
     test_loss = 0.0
     test_pre_index = 0
-    add = 1000
+    add = int(len(test_x)/test_iteration)
 
     for it in range(test_iteration):
         test_batch_x = test_x[test_pre_index: test_pre_index + add]
@@ -215,7 +219,7 @@ training_flag = tf.placeholder(tf.bool)
 learning_rate = tf.placeholder(tf.float32, name='learning_rate')
 
 logits = SE_ResNeXt(x, training=training_flag).model
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=label, logits=logits))
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=label, logits=logits))
 
 l2_loss = tf.add_n([tf.nn.l2_loss(var) for var in tf.trainable_variables()])
 optimizer = tf.train.MomentumOptimizer(learning_rate=learning_rate, momentum=momentum, use_nesterov=True)
@@ -246,7 +250,7 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess :
         train_loss = 0.0
 
         for step in range(1, iteration + 1):
-            if pre_index + batch_size < 50000:
+            if pre_index + batch_size < 4586:
                 batch_x = train_x[pre_index: pre_index + batch_size]
                 batch_y = train_y[pre_index: pre_index + batch_size]
             else:
