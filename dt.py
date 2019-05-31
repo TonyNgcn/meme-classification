@@ -1,10 +1,9 @@
 import numpy as np
 import cv2 as cv
-import os
 from sklearn.model_selection import train_test_split
-from sklearn.utils import shuffle
 from sklearn.preprocessing import OneHotEncoder
-
+import os
+import random
 class_num = 10
 image_size = 32
 img_channels = 3
